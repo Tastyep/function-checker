@@ -1,13 +1,3 @@
-/*
-** moul_func.c for moulfunc in /home/sinet_l/Documents/project/moulinette
-**
-** Made by luc sinet
-** Login   <sinet_l@epitech.net>
-**
-** Started on  Wed Mar 12 00:30:07 2014 luc sinet
-** Last update Wed Mar 12 14:12:02 2014 luc sinet
-*/
-
 #define _GNU_SOURCE
 
 #include <dlfcn.h>
