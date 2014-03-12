@@ -1,0 +1,3 @@
+#!/bin/sh
+
+gcc -Wall -fPIC -shared -o moul_func.so moul_func.c -ldl
