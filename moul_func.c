@@ -13,7 +13,7 @@ int		break_func(const char *func, int *count, char *c)
   if (*count > 0)
     {
       --(*count);
-      printf("%d | Breaking malloc: %c\n", *count, *c);
+      printf("%d | Breaking %s: %c\n", *count, func, *c);
       return (*c == 'y');
     }
   printf("Last: %c | Break %s y/n ?\n", *c, func);
@@ -41,12 +41,27 @@ int	get_num()
   return (atoi(tab));
 }
 
+int	pipe(int pipefd[2])
+{
+  char	state = 'y';
+  int	repeat = 0;
+  int	(*o_pipe)(int pipefd[2]);
+
+  o_pipe = dlsym(RTLD_NEXT, "pipe");
+  return ((break_func("pipe", &repeat, &state)) ?
+	  -1 : (*o_pipe)(pipefd));
+}
+
 int	open(const char *pathname, int flags)
 {
+  char	state = 'y';
+  int	repeat = 0;
   int	(*o_open)(const char *pathname, int flags);
 
   o_open = dlsym(RTLD_NEXT, "open");
-  return ((*o_open)(pathname, flags));
+  printf("on file %s\n", pathname);
+  return ((break_func("open", &repeat, &state)) ?
+	  -1 : (*o_open)(pathname, flags));
 }
 
 ssize_t	read(int fd, void *buf, size_t count)
