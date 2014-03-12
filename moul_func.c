@@ -30,10 +30,15 @@ int		break_func(const char *func, int *count, char *c)
   return (*c == 'y' || *c == '\n');
 }
 
-int	ret_val()
+int	get_num()
 {
-  printf("value: ");
-  return ((int)getchar());
+  char	tab[10] = {0};
+  int	i = 0;
+
+  while (i == 0 || (i < 10 && tab[i - 1] != '\n'))
+    tab[i++] = getchar();
+  tab[i - 1] = '\0';
+  return (atoi(tab));
 }
 
 int	open(const char *pathname, int flags)
@@ -46,9 +51,29 @@ int	open(const char *pathname, int flags)
 
 ssize_t	read(int fd, void *buf, size_t count)
 {
-  ssize_t (*o_read)(int fd, void *buf, size_t count);
+  static int	repeat = 0;
+  static char	state = 'y';
+  static int	val = 0;
+  int		old = repeat;
+  ssize_t	(*o_read)(int fd, void *buf, size_t count);
 
   o_read = dlsym(RTLD_NEXT, "read");
+  printf("\n");
+  if (break_func("read", &repeat, &state))
+    {
+      if (!old || !repeat)
+	{
+	  printf("Value: ");
+	  fflush(stdout);
+	  val = get_num();
+	}
+      printf("stdin: ");
+      fflush(stdout);
+      (*o_read)(fd, buf, count);
+      return (val);
+    }
+  printf("stdin: ");
+  fflush(stdout);
   return ((*o_read)(fd, buf, count));
 }
 
