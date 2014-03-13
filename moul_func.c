@@ -82,12 +82,12 @@ ssize_t	read(int fd, void *buf, size_t count)
 	  fflush(stdout);
 	  val = get_num();
 	}
-      printf("stdin: ");
+      printf("read/%d: ", fd);
       fflush(stdout);
       (*o_read)(fd, buf, count);
       return (val);
     }
-  printf("stdin: ");
+  printf("read/%d: ",fd);
   fflush(stdout);
   return ((*o_read)(fd, buf, count));
 }
