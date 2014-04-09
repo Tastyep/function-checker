@@ -101,3 +101,26 @@ void	*malloc(size_t size)
   o_malloc = dlsym(RTLD_NEXT, "malloc");
   return (break_func("malloc", &repeat, &state) ? NULL : (*o_malloc)(size));
 }
+
+ssize_t	write(int fd, const void *buf, size_t count)
+{
+  static int	repeat = 0;
+  static char	state = 'y';
+  static int	val = 0;
+  int		old = repeat;
+  int	(*o_write)(int fd, const void *buf, size_t count);
+
+  o_write = dlsym(RTLD_NEXT, "write");
+  if (break_func("write", &repeat, &state))
+    {
+      if (!old || !repeat)
+	{
+	  printf("\nValue: ");
+	  fflush(stdout);
+	  val = get_num();
+	}
+      fflush(stdout);
+      return ((*o_write)(fd, buf, val));
+    }
+  return ((*o_write)(fd, buf, count));
+}
